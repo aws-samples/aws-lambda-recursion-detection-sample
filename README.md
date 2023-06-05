@@ -41,8 +41,7 @@ Please note down the Source SQS Queue URL after deployment
 
 ### Test
 
-```aws sqs send-message --queue-url <SOURCE_SQS_URL> --message-body {\"orderId\":"1",\"productName\":\"Bolt\",\"orderStatus\":\"Submitted\"}
-```
+	$ aws sqs send-message --queue-url <SOURCE_SQS_URL> --message-body {\"orderId\":"1",\"productName\":\"Bolt\",\"orderStatus\":\"Submitted\"}
 
 ### Cleanup
     $ sam delete
