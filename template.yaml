@@ -1,0 +1,62 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  recursion-sample
+
+  Sample SAM Template for recursion-sample
+
+Globals:
+  Function:
+    Timeout: 20
+    MemorySize: 128
+    Tracing: Active
+  Api:
+    TracingEnabled: True
+
+Resources:
+  SqsSourceQueue:
+    Type: AWS::SQS::Queue
+  SqsTargetQueue:
+    Type: AWS::SQS::Queue
+
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: SendMessageFunction
+      Handler: com.example.App::handleRequest
+      Runtime: java11
+      Architectures:
+        - x86_64
+      MemorySize: 1024
+      Environment:
+        Variables:
+          SOURCE_SQS_NAME: !Ref SqsSourceQueue
+          TARGET_SQS_NAME: !Ref SqsSourceQueue
+      Policies:
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt SqsSourceQueue.QueueName
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt SqsTargetQueue.QueueName
+      Events:
+        MySQSEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt SqsSourceQueue.Arn
+            BatchSize: 1
+
+Outputs:
+  LambdaFunction:
+    Description: "Lambda Function ARN"
+    Value: !GetAtt LambdaFunction.Arn
+  SourceSQSqueueName:
+    Description: Source SQS queue
+    Value: !GetAtt SqsSourceQueue.QueueName
+  SourceSQSqueueURL:
+    Description: Source SQS queue URL
+    Value: !Ref SqsSourceQueue
+  TargetSQSqueueName:
+    Description: Target SQS queue
+    Value: !GetAtt SqsTargetQueue.QueueName
+  TargetSQSqueueURL:
+    Description: Target SQS queue URL
+    Value: !Ref SqsTargetQueue
