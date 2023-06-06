@@ -16,7 +16,16 @@ Globals:
 Resources:
   SqsSourceQueue:
     Type: AWS::SQS::Queue
+    Properties: 
+      RedrivePolicy: 
+        deadLetterTargetArn: 
+          Fn::GetAtt: 
+            - "SqsDLQ"
+            - "Arn"
+        maxReceiveCount: 5
   SqsTargetQueue:
+    Type: AWS::SQS::Queue
+  SqsDLQ:
     Type: AWS::SQS::Queue
 
   LambdaFunction:

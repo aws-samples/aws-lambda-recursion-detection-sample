@@ -12,6 +12,7 @@ The sample application is a simple order processing app with following architect
 2. The message is processed by Lambda function from source queue using the Event Source Mapping
 3. The Lambda function sends updated order to the destination SQS queue via SQS SendMessage API calls.
 4. Updated order is sent to the Source SQS queue due to mis-configuration instead of the destination queue.
+5. Lambda service detects the recursion and stops invoking the lambda function after 16 tries. The message is delivered to the dead letter queue as per the redrive policy configuration.
 
 ### Deployment
 
