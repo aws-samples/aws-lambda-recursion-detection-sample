@@ -283,3 +283,6 @@ gradle-app.setting
 ## SAM ##
 .aws-sam
 samconfig.toml
+
+##VS Code
+.vscode

@@ -32,15 +32,14 @@ public class App implements RequestHandler<SQSEvent, String> {
     public String handleRequest(final SQSEvent input, final Context context) {
         try {
             String message = input.getRecords().get(0).getBody();
-            logger.info("MESSAGE :: " + message);
+            logger.info("MESSAGE RECEIVED :: " + message);
             Order order = gson.fromJson(message, Order.class);
             order.setOrderStatus("Processed");
-            logger.info("**** PRINTING TRACE ID *****");
-            logger.info(System.getenv("_X_AMZN_TRACE_ID"));
             SendMessageRequest sendMessageRequest = SendMessageRequest.builder()
                     .messageBody(gson.toJson(order))
                     .queueUrl(System.getenv("TARGET_SQS_NAME"))
                     .build();
+            logger.info("Publishing Processed Message back to SQS ...");
             SendMessageResponse result = sqsClient.sendMessage(sendMessageRequest);
             return result.messageId();
         } catch (Exception e) {
