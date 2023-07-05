@@ -39,8 +39,8 @@ Resources:
       MemorySize: 1024
       Environment:
         Variables:
-          SOURCE_SQS_NAME: !Ref SqsSourceQueue
-          TARGET_SQS_NAME: !Ref SqsSourceQueue
+          SOURCE_SQS_NAME: !Ref SqsSourceQueue          
+          TARGET_SQS_NAME: !Ref SqsSourceQueue ### Configuration ERROR to demonstrate recursion
       Policies:
         - SQSSendMessagePolicy:
             QueueName: !GetAtt SqsSourceQueue.QueueName

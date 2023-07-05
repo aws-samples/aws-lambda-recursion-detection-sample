@@ -8,19 +8,19 @@ The sample application is a simple order processing app with following architect
 ![Sample Application Architecture](images/RecursionBlog.jpg)
 
 
-1. Order is sent to a Source SQS queue
-2. The message is processed by Lambda function from source queue using the Event Source Mapping
-3. The Lambda function sends updated order to the destination SQS queue via SQS SendMessage API calls.
-4. Updated order is sent to the Source SQS queue due to mis-configuration instead of the destination queue.
-5. Lambda service detects the recursion and stops invoking the lambda function after 16 tries. The message is delivered to the dead letter queue as per the redrive policy configuration.
+1. A new order information message is sent to the source SQS queue.
+2. This message is consumed by a Lambda function from the source queue using the Event Source Mapping
+3. The Lambda function processes the message and sends the updated orders message to the destination SQS queue using SQS SendMessage API.
+4. A Dead Letter Queue(DLQ) is configured for handling any failed or unprocessed messages. 
+5. Because of a mis-configuration, the Lambda function sends the message to the source SQS queue instead of the destination queue. This will cause an unintended recursive loop of Lambda function executions. 
 
 ### Deployment
 
 #### Pre-requisites
 1. AWS Account
-2. Java 11
-3. Maven
+2. [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 3. AWS [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html) v1.82.0
+4. [Docker](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-docker.html#install-docker-instructions)
 
 #### CLI Commands
 
@@ -30,11 +30,11 @@ The sample application is a simple order processing app with following architect
 
 2.	Use the AWS SAM CLI to build the application
 
-    $ sam build
+    $ sam build --use-container
 
 3.	Use the AWS SAM CLI to deploy the resources to your AWS account.
 
-    $ sam deploy -g
+    $ sam deploy --guided
 
 This will deploy your Lambda function with source and target SQS queues.
 
@@ -42,7 +42,7 @@ Please note down the Source SQS Queue URL after deployment
 
 ### Test
 
-	$ aws sqs send-message --queue-url <SOURCE_SQS_URL> --message-body {\"orderId\":"1",\"productName\":\"Bolt\",\"orderStatus\":\"Submitted\"}
+	$ aws sqs send-message --queue-url <SOURCE_SQS_URL> --message-body '{\"orderId\":"1",\"productName\":\"Bolt\",\"orderStatus\":\"Submitted\"}'
 
 ### Cleanup
     $ sam delete
