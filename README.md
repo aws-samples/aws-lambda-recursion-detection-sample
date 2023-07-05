@@ -1,7 +1,7 @@
 # AWS Lambda Recursion Controls Sample
 
 This is a sample application to demonstrate preventitive controls to detect recursion in AWS Lambda functions.
-You can find more details about this feature in this [blog post]().
+You can find more details about this feature in this [blog post](https://aws.amazon.com/blogs/compute/detecting-and-stopping-recursive-loops-in-aws-lambda-functions/).
 
 The sample application is a simple order processing app with following architecture.
 
